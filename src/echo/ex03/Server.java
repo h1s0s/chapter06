@@ -1,4 +1,4 @@
-package echo.ex01;
+package echo.ex03;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,7 +14,10 @@ import java.net.Socket;
 public class Server {
 
 	public static void main(String[] args) throws IOException {//예외처리를 위한 경고문을 제거해줌.
-		// 1.1 TCP 소켓 프로그래밍 - 서버, 서버소켓 만들기.
+		// 1.3 TCP 소켓 프로그래밍 - 서버, 서버소켓 만들기-3
+		//멀티 스레드 구현하기
+		//1. Thread라는 클래스를 사용하는 방법
+		//2. Runnable이라는 인터페이스를 사용하는 방법
 		
 		//1. ~서버 소켓을 메모리에 올린다~
 		//서버소켓:클라이언트의 연결요청을 기다리면서 연결 요청에 대한 수락을 담당한다.
@@ -25,7 +28,7 @@ public class Server {
 		//맥 아이피 얻는법 : 터미널에 ipconfig getifaddr en0
 		ServerSocket serverSocket = new ServerSocket();
 		
-		//2. ~포트를 만든다
+		//2. ~포트를 만든다(바인드)
 		serverSocket.bind(new InetSocketAddress("172.30.1.51", 10001));
 		//자신의 유동아이피번호, 포트번호10001(강사님이 정해주심)
 		//bind() : 포트를 생성해줌.
@@ -50,14 +53,21 @@ public class Server {
 		BufferedWriter bw = new BufferedWriter(osw);
 		
 		//메세지 받기
-		String msg = br.readLine();
-		System.out.println("받은메세지:"+msg);
+		while(true) {
+			String msg = br.readLine();
+			if(msg == null) {
+				System.out.println("클라이언트 종료키 입력");
+				break;
+			}
+			System.out.println("받은메세지:"+msg);
+			//메세지 보내기
+			bw.write(msg);
+			bw.newLine();
+			bw.flush();
+		}
 		
-		//메세지 보내기
-		bw.write(msg);
-		bw.newLine();
-		bw.flush();
-		
+		System.out.println("====================");
+		System.out.println("<서버종료>");
 		bw.close();
 		socket.close();
 		serverSocket.close();	

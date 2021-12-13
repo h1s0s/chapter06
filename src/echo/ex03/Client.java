@@ -1,4 +1,4 @@
-package echo.ex01;
+package echo.ex03;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -9,12 +9,14 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Client {
 
 	public static void main(String[] args) throws IOException {
-		// 1.1 TCP 소켓 프로그래밍 - 클라이언트 만들기
-
+		// 1.3 TCP 소켓 프로그래밍 - 클라이언트 만들기-3
+		// 멀티 스레드 구현하기
+		
 		//3. ~클라이언트 소켓 생성~
 		Socket socket = new Socket();
 		
@@ -40,16 +42,30 @@ public class Client {
 		InputStreamReader isr = new InputStreamReader(is,"UTF-8");
 		BufferedReader br = new BufferedReader(isr);
 		
+		//Scanner (키보드 입력용)
+		Scanner sc = new Scanner(System.in);
+		
 		//메세지 보내기
-		String str = "안녕하세요";
-		bw.write(str);
-		bw.newLine();
-		bw.flush();//보내주는애, 굳이 안써줘도 되지만 안쓰면 오류날때도 있기때문에 그냥 써줌
+		while(true) {
+			String str = sc.nextLine();
+			if("/q".equals(str)) { //탈출조건
+				//거꾸로 써준 이유, str에 null값이 오게 되면
+				//예외처리가 생김.(null값으로 인한 예외)
+				System.out.println("종료키 입력");
+				break;
+			}
+			bw.write(str);
+			bw.newLine();
+			bw.flush();//보내주는애, 굳이 안써줘도 되지만 안쓰면 오류날때도 있기때문에 그냥 써줌
 		
-		//메세지 받기
-		String remsg = br.readLine();
-		System.out.println("server:"+remsg);
+			//메세지 받기
+			String remsg = br.readLine();
+			System.out.println("server:"+remsg);
+		}
 		
+		System.out.println("====================");
+		System.out.println("<클라이언트 종료>");
+		sc.close();
 		bw.close();
 		socket.close();
 	}
